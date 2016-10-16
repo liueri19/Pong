@@ -2,15 +2,20 @@ package org.sevenhills.liueri19;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-public class Table {
+import javax.swing.JPanel;
+
+public class Table extends JPanel {
+	private static final long serialVersionUID = 1L;
+	
 	public final int width, height;
-	public static final Random RAND = new Random();
-	private List<Ball> balls = new ArrayList<Ball>();
+	public double velocity;
+	private List<Ball> balls = new ArrayList<Ball>();	//may add multiple balls for difficulty
 	
 	public Table() {
 		this(800, 600);
+		balls.add(Ball.construct(this, velocity));
+		//setup a 800*600 table with a random heading ball in the center.
 	}
 	
 	public Table(int width, int height) {
@@ -18,11 +23,11 @@ public class Table {
 		this.height = height;
 	}
 	
-	public void replaceBall() {
+	public void resetBall() {
 		
 	}
 	
 	public void setBall(double direction) {
-		balls.add(new Ball(this, direction));
+		
 	}
 }

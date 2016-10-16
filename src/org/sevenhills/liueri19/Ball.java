@@ -7,35 +7,42 @@ public class Ball {
 	private double[] vector;	//use array to store vector: {magnitude, direction}
 	/*
 	 * direction, in degrees, the ball is going. 0 degrees is straight up.
-	 * magnitude of the vector should never change.
+	 * magnitude of the vector should not change once ball constructed.
 	 */
 	private Table table;
-	private Random random;
+	private static final Random RANDOM = new Random();
 	
-	public static Ball constructBall(Table table) {
+	public static Ball construct(Table table, double velocity) {
 		double magnitude, direction;
-		magnitude = 1.0;
-		boolean randBoolean = table.RAND.nextBoolean();
-		double randDirection = table.RAND
-		return new Ball(table, new double[] {table.width / 2.0, table.height / 2.0});
-		//create new ball at center, with heading 0
+		magnitude = velocity;
+		
+		boolean randBoolean = RANDOM.nextBoolean();
+		double randDirection = RANDOM.nextDouble() * 90 + 45;
+		if (randBoolean)
+			direction = 180 - randDirection;
+		else
+			direction = 180 + randDirection;
+		//generate random heading
+		return new Ball(table, 
+				new double[] {table.width / 2.0, table.height / 2.0}, 
+				new double[] {magnitude, direction});
+		//create new ball at center, with random heading
 	}
 	
-	private Ball(Table table, double[] coordinate) {
-		this.coordinate = coordinate;
+	private Ball(Table table, double[] coordinate, double[] vector) {
 		this.table = table;
+		this.coordinate = coordinate;
+		this.vector = vector;
 	}
 	
 	public Ball(Table table, double[] coordinate, double magnitude, double direction) {
+		this.table = table;
 		this.coordinate = coordinate;
 		vector[0] = magnitude;
 		vector[1] = direction;
-		this.table = table;
-		random = table.RAND;
 	}
 	
-	//we may never want the direction to be set outside this class
-	private void setDirection(double d) {
+	public void setDirection(double d) {
 		if (d < 0)
 			d = 360 - (d % 360);
 		if (d >= 360)
