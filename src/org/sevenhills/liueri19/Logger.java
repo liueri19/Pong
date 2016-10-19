@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class Logger {
+	private Boolean logToFile = false;
 	private TimeZone timeZone = TimeZone.getTimeZone("UTC"); //use UTC time for less confusion
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); //ISO 8601 date format
 	private Path logPath;
@@ -45,11 +46,13 @@ public class Logger {
 	
 	public void log(String log, Object... args) {
 		System.out.printf(log, args);
-		try {
-			writer.write(String.format(log, args));
-		} catch (IOException e) {
-			System.out.println("Failed to write log to file, here's the stack trace:");
-			e.printStackTrace();
+		if (logToFile) {
+			try {
+				writer.write(String.format(log, args));
+			} catch (IOException e) {
+				System.out.println("Failed to write log to file, here's the stack trace:");
+				e.printStackTrace();
+			}
 		}
 	}
 	

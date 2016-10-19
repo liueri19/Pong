@@ -1,6 +1,34 @@
 package org.sevenhills.liueri19;
 
 public class Paddle {
-	//respond to user input events, key press events? mouse events?
+	private double yLoc;
+	private final double xLoc;
+	private final Table table;
 	
+	public Paddle(Table table, double x) {
+		this(table, x, table.height / 2);
+	}
+	
+	public Paddle(Table table, double x, double y) {
+		this.table = table;
+		xLoc = x;
+		yLoc = y;
+	}
+	
+	//accessors and mutators
+	public double getX() {
+		return xLoc;
+	}
+	
+	public double getY() {
+		return yLoc;
+	}
+	
+	public void moveUp(double deltaY) {
+		yLoc -= deltaY;
+	}
+	
+	public void moveDown(double deltaY) {
+		yLoc += deltaY;
+	}
 }

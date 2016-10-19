@@ -3,10 +3,10 @@ package org.sevenhills.liueri19;
 import java.util.Random;
 
 public class Ball {
-	private double[] coordinate;	//use array to store coordinate: {X, Y} units are pixels
-	private double[] vector;	//use array to store vector: {magnitude, direction}
+	private double[] coordinate = new double[2];	//use array to store coordinate: {X, Y} units are pixels
+	private double[] vector = new double[2];	//use array to store vector: {magnitude, direction}
 	/*
-	 * direction, in degrees, the ball is going. 0 degrees is straight up.
+	 * direction, in degrees, the ball is going. 0 degrees is horizontal right.
 	 * magnitude of the vector should not change once ball constructed.
 	 */
 	private Table table;
@@ -15,17 +15,11 @@ public class Ball {
 	public static Ball construct(Table table, double velocity) {
 		double magnitude, direction;
 		magnitude = velocity;
-		
 		//generate random heading
-		boolean randBoolean = RANDOM.nextBoolean();
-		double randDirection = RANDOM.nextDouble() * 90 + 45;
-		if (randBoolean)
-			direction = 180 - randDirection;
-		else
-			direction = 180 + randDirection;
+		direction = randomDirection();
 		
 		//create new ball at center, with random heading
-		return new Ball(table, 
+		return new Ball(table,
 				new double[] {table.width / 2.0, table.height / 2.0}, 
 				magnitude, direction);
 	}
@@ -37,39 +31,73 @@ public class Ball {
 		vector[1] = direction;
 	}
 	
+	//does not bounce properly, unknown reason
 	public void update() {
 		double deltaX, deltaY, angle, magnitude;
-		angle = getDirection();
-		magnitude = getMagnitude();
 		//check collision, change direction if needed
-		if (coordinate[0] <= 0) {	//reaching the left edge of the table
+		if (getLeftEdge() <= 0) {	//reaching the left edge of the table
 			table.playerRScore();
 		}
-		else if (coordinate[0] >= table.width) {	//reaching the right edge of the table
+		else if (getRightEdge() >= table.width) {	//reaching the right edge of the table
 			table.playerLScore();
 		}
-		if (coordinate[1] <= 0 || coordinate[1] >= table.height) {	//reaching upper or lower bounds
-			setDirection(180 + parseDirection(-getDirection()));
+		if (getUpperEdge() <= 0) {
+			setDirection(-getDirection());
+			setY(table.ballRadius);
 		}
+		else if (getLowerEdge() >= table.height) {
+			setDirection(180 - getDirection());
+			setY(table.height - table.ballRadius);
+		}
+		//print some logs
+		System.out.println("Ball Coordinate: " + getX() + "\t, " + getY()
+							+ "\t; Vector: " + getMagnitude() + ", " + getDirection());
+		/*System.out.printf("Ball Coordinate: %d, %d; Vector: %d, %d.\n", 
+				getX(), getY(), getMagnitude(), getDirection());*/ //why this does not work? It's not the tabs
+		///
+		
 		//update coordinate
-		deltaX = Math.sin(angle) * magnitude;
-		deltaY = Math.cos(angle) * magnitude;
+		angle = getDirection();
+		magnitude = getMagnitude();
+		deltaX = Math.cos(angle) * magnitude;
+		deltaY = Math.sin(angle) * magnitude;
 		coordinate[0] += deltaX;
-		coordinate[1] += deltaY;
+		coordinate[1] -= deltaY;
 	}
 	
 	//to make sure direction is in the range 0 inclusive to 360 exclusive.
-	public double parseDirection(double d) {
+	public static double parseDirection(double d) {
 		if (d < 0)
-			d = 360 - (d % 360);
+			d = 360 + (d % 360);
 		if (d >= 360)	//else if is not used because 360 - (d % 360) could result 360.
 			d = d % 360;
 		return d;
 	}
 	
+	public static double randomDirection() {
+		double randDirection = RANDOM.nextDouble() * 90 - 45;
+		if (RANDOM.nextBoolean())
+			return parseDirection(randDirection);
+		return 180 - randDirection;
+	}
+	
+	public void reset() {
+		setX(table.width / 2.0);
+		setY(table.height / 2.0);
+		setDirection(randomDirection());
+	}
+	
 	//accessors and mutators 
 	public double getX() {
 		return coordinate[0];
+	}
+	
+	public double getLeftEdge() {
+		return getX() - table.ballRadius;
+	}
+	
+	public double getRightEdge() {
+		return getX() + table.ballRadius;
 	}
 	
 	/**Note that this method does not check for invalid arguments.*/
@@ -79,6 +107,14 @@ public class Ball {
 	
 	public double getY() {
 		return coordinate[1];
+	}
+	
+	public double getUpperEdge() {
+		return getY() - table.ballRadius;
+	}
+	
+	public double getLowerEdge() {
+		return getY() + table.ballRadius;
 	}
 	
 	/**Note that this method does not check for invalid arguments.*/
