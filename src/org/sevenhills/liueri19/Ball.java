@@ -41,28 +41,27 @@ public class Ball {
 		else if (getRightEdge() >= table.width) {	//reaching the right edge of the table
 			table.playerLScore();
 		}
-		if (getUpperEdge() <= 0) {
+		if (getUpperEdge() < 0) {
 			setDirection(-getDirection());
 			setY(table.ballRadius);
 		}
-		else if (getLowerEdge() >= table.height) {
-			setDirection(180 - getDirection());
+		else if (getLowerEdge() > table.height) {
+			setDirection(-getDirection());
 			setY(table.height - table.ballRadius);
 		}
-		//print some logs
-		System.out.println("Ball Coordinate: " + getX() + "\t, " + getY()
-							+ "\t; Vector: " + getMagnitude() + ", " + getDirection());
-		/*System.out.printf("Ball Coordinate: %d, %d; Vector: %d, %d.\n", 
-				getX(), getY(), getMagnitude(), getDirection());*/ //why this does not work? It's not the tabs
-		///
 		
 		//update coordinate
 		angle = getDirection();
 		magnitude = getMagnitude();
-		deltaX = Math.cos(angle) * magnitude;
-		deltaY = Math.sin(angle) * magnitude;
+		deltaX = Math.cos(Math.toRadians(angle)) * magnitude;	//didn't realize angle was measured in radians
+		deltaY = Math.sin(Math.toRadians(angle)) * magnitude;
 		coordinate[0] += deltaX;
 		coordinate[1] -= deltaY;
+		
+		//print some logs
+/*		System.out.printf("Ball Coordinate: %.5f, %.5f; Vector: %f, %.5f;%nDetails: angle = %f, magnitude = %.5f, deltaX = %.5f, deltaY = %.5f;%n%n", 
+				getX(), getY(), getMagnitude(), getDirection(), angle, magnitude, deltaX, deltaY);*/
+		///
 	}
 	
 	//to make sure direction is in the range 0 inclusive to 360 exclusive.

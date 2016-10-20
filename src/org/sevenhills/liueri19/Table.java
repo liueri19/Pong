@@ -20,12 +20,12 @@ import javax.swing.Timer;
 public class Table extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final Timer displayTimer = new Timer(17, this);	//approximately 60 fps
-	private double ballVelocity = 2.5;	//in pixels/millisecond? IDK yet...; may increase speed for difficulty
+	private double ballVelocity = 3.5;	//unit: pixels / GameClock's Delay 
 	public final double paddleVelocity = 1;
 	public final int width, height;
 	//private List<Ball> balls = new ArrayList<Ball>();	may add multiple balls for difficulty
 	private Ball ball;
-	public final int ballRadius = 5;
+	public final int ballRadius = 10;
 	private int playerLScore = 0;
 	private int playerRScore = 0;
 	private List<Paddle> paddles = new ArrayList<Paddle>(2);
