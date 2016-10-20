@@ -4,6 +4,7 @@ import javax.swing.SwingWorker;
 
 public class GameClock extends SwingWorker<Void, Void> {
 	private Table table;
+	private final int interval;
 	
 	@Override
 	protected Void doInBackground() {
@@ -11,10 +12,8 @@ public class GameClock extends SwingWorker<Void, Void> {
 		while(proceed) {
 			table.updateAll();
 			try {
-				Thread.sleep(16);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+				Thread.sleep(interval);
+			} catch (InterruptedException e) {e.printStackTrace();}
 		}
 		return null;
 	}
@@ -22,5 +21,6 @@ public class GameClock extends SwingWorker<Void, Void> {
 	public GameClock(Table table) {
 		super();
 		this.table = table;
+		interval = table.gameClockInterval;
 	}
 }

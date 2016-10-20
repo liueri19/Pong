@@ -34,22 +34,26 @@ public class Ball {
 	//does not bounce properly, unknown reason
 	public void update() {
 		double deltaX, deltaY, angle, magnitude;
-		//check collision, change direction if needed
 		if (getLeftEdge() <= 0) {	//reaching the left edge of the table
 			table.playerRScore();
 		}
 		else if (getRightEdge() >= table.width) {	//reaching the right edge of the table
 			table.playerLScore();
 		}
-		if (getUpperEdge() < 0) {
-			setDirection(-getDirection());
-			setY(table.ballRadius);
-		}
-		else if (getLowerEdge() > table.height) {
-			setDirection(-getDirection());
-			setY(table.height - table.ballRadius);
-		}
 		
+		//collision detection
+		if (getUpperEdge() <= 0 || getLowerEdge() >= table.height) {	//upper & lower bounds
+			bounceVertical();
+		}
+/*		else if () {	//lower bound
+			bounceVertical();
+		}*/
+		//collision detection for paddles
+		for (Paddle paddle : table.getPaddles()) {
+			if (getRightEdge() >= paddle.getX() || getLeftEdge() <= (paddle.getX() + table.paddleWidth)) {
+				bounceHorizontal();
+			}
+		}
 		//update coordinate
 		angle = getDirection();
 		magnitude = getMagnitude();
@@ -62,6 +66,14 @@ public class Ball {
 /*		System.out.printf("Ball Coordinate: %.5f, %.5f; Vector: %f, %.5f;%nDetails: angle = %f, magnitude = %.5f, deltaX = %.5f, deltaY = %.5f;%n%n", 
 				getX(), getY(), getMagnitude(), getDirection(), angle, magnitude, deltaX, deltaY);*/
 		///
+	}
+	
+	private void bounceVertical() {
+		setDirection(-getDirection());
+	}
+	
+	private void bounceHorizontal() {
+		setDirection(180 - getDirection());
 	}
 	
 	//to make sure direction is in the range 0 inclusive to 360 exclusive.

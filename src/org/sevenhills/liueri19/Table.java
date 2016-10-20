@@ -8,8 +8,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +18,9 @@ import javax.swing.Timer;
 public class Table extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final Timer displayTimer = new Timer(17, this);	//approximately 60 fps
+	public final int gameClockInterval = 16;
 	private double ballVelocity = 3.5;	//unit: pixels / GameClock's Delay 
-	public final double paddleVelocity = 1;
+	public final double paddleVelocity = 2.5;
 	public final int width, height;
 	//private List<Ball> balls = new ArrayList<Ball>();	may add multiple balls for difficulty
 	private Ball ball;
@@ -29,6 +28,9 @@ public class Table extends JPanel implements ActionListener {
 	private int playerLScore = 0;
 	private int playerRScore = 0;
 	private List<Paddle> paddles = new ArrayList<Paddle>(2);
+	public final int paddleWidth = 20;
+	public final int paddleHeight = 80;
+	public final int paddleEdgeDistance = 30;
 	
 	public Table() {
 		this(800, 600);
@@ -41,8 +43,8 @@ public class Table extends JPanel implements ActionListener {
 		super(true);
 		this.width = width;
 		this.height = height;
-		this.addPaddle(new Paddle(this, 10));	//could be counting from 0
-		this.addPaddle(new Paddle(this, width - 10));
+		this.addPaddle(new Paddle(this, paddleEdgeDistance));
+		this.addPaddle(new Paddle(this, width - paddleEdgeDistance));
 		this.setOpaque(false);
 		this.setPreferredSize(new Dimension(width, height));
 	}
@@ -57,9 +59,9 @@ public class Table extends JPanel implements ActionListener {
 	}
 	
 	public void setUp() {
-		this.addKeyListener(new KeyHandler(this));
 		JFrame frame = new JFrame("Pong Game");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.addKeyListener(new KeyHandler(this));
         frame.add(this);
         frame.pack();
 		frame.setVisible(true);
@@ -87,10 +89,10 @@ public class Table extends JPanel implements ActionListener {
 		//paint ball
 		int d = 2 * ballRadius;
 		g.fillOval((int) ball.getX() - ballRadius, (int) ball.getY() - ballRadius, d, d);
-		//paint paddles
-		for (Paddle paddle : paddles) {
-			
-		}
+		//paint left paddle
+		g.fillRect(paddleEdgeDistance, (int) paddles.get(0).getY(), paddleWidth, paddleHeight);
+		//paint right paddle
+		g.fillRect(width - paddleEdgeDistance - paddleWidth, (int) paddles.get(1).getY(), paddleWidth, paddleHeight);
 		//paint scores
 		int pointSize = 32;
 		g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, pointSize));
@@ -140,65 +142,4 @@ public class Table extends JPanel implements ActionListener {
 	public int getPlayerRScore() {
 		return playerRScore;
 	}
-}
-
-
-class KeyHandler implements KeyListener {
-	private boolean wKeyReleased,
-					sKeyReleased,
-					upKeyReleased,
-					downKeyReleased;
-	private Table table;
-	private double deltaY;
-	
-	public KeyHandler(Table table) {
-		this.table = table;
-		deltaY = table.paddleVelocity;
-	}
-	
-	@Override
-	public void keyPressed(KeyEvent e) {
-		//left side player
-		if (e.getKeyCode() == KeyEvent.VK_W) {
-			wKeyReleased = false;
-			do
-				table.getLeftPaddle().moveUp(deltaY);
-			while (!wKeyReleased);	//while W is held
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_S) {
-			sKeyReleased = false;
-			do
-				table.getLeftPaddle().moveDown(deltaY);
-			while (!sKeyReleased);
-		}
-		
-		//right side player
-		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			upKeyReleased = false;
-			do
-				table.getRightPaddle().moveUp(deltaY);
-			while (!upKeyReleased);
-		}
-		else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			downKeyReleased = false;
-			do
-				table.getRightPaddle().moveDown(deltaY);
-			while (!downKeyReleased);
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_W)
-			wKeyReleased = true;
-		else if (e.getKeyCode() == KeyEvent.VK_S)
-			sKeyReleased = true;
-		else if (e.getKeyCode() == KeyEvent.VK_UP)
-			upKeyReleased = true;
-		else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-			downKeyReleased = true;
-	}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {}
 }
