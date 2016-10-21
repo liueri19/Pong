@@ -8,11 +8,14 @@ import javax.swing.SwingWorker;
 public class Paddle {
 	private double yLoc;
 	private final double xLoc;
+	private final Table table;
+	
 	public Paddle(Table table, double x) {
 		this(table, x, table.height / 2);
 	}
 	
 	public Paddle(Table table, double x, double y) {
+		this.table = table;
 		xLoc = x;
 		yLoc = y;
 	}
@@ -27,11 +30,13 @@ public class Paddle {
 	}
 	
 	public void moveUp(double deltaY) {
-		yLoc -= deltaY;
+		if (!(getY() <= 0))
+			yLoc -= deltaY;
 	}
 	
 	public void moveDown(double deltaY) {
-		yLoc += deltaY;
+		if (!(getY() + table.paddleHeight >= table.height))
+			yLoc += deltaY;
 	}
 }
 

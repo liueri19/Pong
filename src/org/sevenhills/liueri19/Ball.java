@@ -51,25 +51,20 @@ public class Ball {
 		List<Paddle> paddles = table.getPaddles();
 		Paddle leftPaddle = paddles.get(0);
 		Paddle rightPaddle = paddles.get(1);
-		if ((getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth))
+		if (((getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth))
 				&& (getLowerEdge() >= leftPaddle.getY())
 				&& (getUpperEdge() <= leftPaddle.getY() + table.paddleHeight)
-				&& (getLeftEdge() > leftPaddle.getX())
-				|| getRightEdge() >= rightPaddle.getX()
+				&& (getLeftEdge() > leftPaddle.getX()))
+				|| ((getRightEdge() >= rightPaddle.getX())
 				&& (getLowerEdge() >= rightPaddle.getY())
 				&& (getUpperEdge() <= rightPaddle.getY() + table.paddleHeight)
-				&& (getRightEdge() < rightPaddle.getX() + table.paddleWidth))
-			bounceHorizontal();
-		else if ((((getLowerEdge() >= leftPaddle.getY())
-				|| (getUpperEdge() <= leftPaddle.getY() + table.paddleHeight))
-				&& (getLeftEdge() <= leftPaddle.getX() + table.paddleWidth)
-				&& (getRightEdge() >= leftPaddle.getX()))
-				||
-				(((getLowerEdge() >= rightPaddle.getY())
-				|| (getUpperEdge() <= rightPaddle.getY() + table.paddleHeight))
-				&& (getLeftEdge() <= rightPaddle.getX() + table.paddleWidth)
-				&& (getRightEdge() >= rightPaddle.getX())))	//this boolean expression does not deliver the desired result
-			bounceVertical();
+				&& (getRightEdge() < rightPaddle.getX() + table.paddleWidth))) {
+			if (getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth - table.ballRadius)
+					|| getRightEdge() >= (rightPaddle.getX() + table.ballRadius))
+				bounceVertical();
+			else
+				bounceHorizontal();
+		}
 		
 		//update coordinate
 		angle = getDirection();

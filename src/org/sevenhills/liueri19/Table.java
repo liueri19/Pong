@@ -71,7 +71,7 @@ public class Table extends JPanel implements ActionListener {
 	
 	public void updateAll() {
 		ball.update();
-		//paddles have nothing to update (surprisingly)
+		//movement for paddles are handled by separate threads
 	}
 	
 	public void resetBall() {
