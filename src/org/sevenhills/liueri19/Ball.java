@@ -1,5 +1,6 @@
 package org.sevenhills.liueri19;
 
+import java.util.List;
 import java.util.Random;
 
 public class Ball {
@@ -45,19 +46,35 @@ public class Ball {
 		if (getUpperEdge() <= 0 || getLowerEdge() >= table.height) {	//upper & lower bounds
 			bounceVertical();
 		}
-/*		else if () {	//lower bound
-			bounceVertical();
-		}*/
+
 		//collision detection for paddles
-		for (Paddle paddle : table.getPaddles()) {
-			if (getRightEdge() >= paddle.getX() || getLeftEdge() <= (paddle.getX() + table.paddleWidth)) {
-				bounceHorizontal();
-			}
-		}
+		List<Paddle> paddles = table.getPaddles();
+		Paddle leftPaddle = paddles.get(0);
+		Paddle rightPaddle = paddles.get(1);
+		if ((getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth))
+				&& (getLowerEdge() >= leftPaddle.getY())
+				&& (getUpperEdge() <= leftPaddle.getY() + table.paddleHeight)
+				&& (getLeftEdge() > leftPaddle.getX())
+				|| getRightEdge() >= rightPaddle.getX()
+				&& (getLowerEdge() >= rightPaddle.getY())
+				&& (getUpperEdge() <= rightPaddle.getY() + table.paddleHeight)
+				&& (getRightEdge() < rightPaddle.getX() + table.paddleWidth))
+			bounceHorizontal();
+		else if ((((getLowerEdge() >= leftPaddle.getY())
+				|| (getUpperEdge() <= leftPaddle.getY() + table.paddleHeight))
+				&& (getLeftEdge() <= leftPaddle.getX() + table.paddleWidth)
+				&& (getRightEdge() >= leftPaddle.getX()))
+				||
+				(((getLowerEdge() >= rightPaddle.getY())
+				|| (getUpperEdge() <= rightPaddle.getY() + table.paddleHeight))
+				&& (getLeftEdge() <= rightPaddle.getX() + table.paddleWidth)
+				&& (getRightEdge() >= rightPaddle.getX())))	//this boolean expression does not deliver the desired result
+			bounceVertical();
+		
 		//update coordinate
 		angle = getDirection();
 		magnitude = getMagnitude();
-		deltaX = Math.cos(Math.toRadians(angle)) * magnitude;	//didn't realize angle was measured in radians
+		deltaX = Math.cos(Math.toRadians(angle)) * magnitude;
 		deltaY = Math.sin(Math.toRadians(angle)) * magnitude;
 		coordinate[0] += deltaX;
 		coordinate[1] -= deltaY;

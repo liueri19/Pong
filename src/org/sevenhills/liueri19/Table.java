@@ -19,8 +19,8 @@ public class Table extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final Timer displayTimer = new Timer(17, this);	//approximately 60 fps
 	public final int gameClockInterval = 16;
-	private double ballVelocity = 3.5;	//unit: pixels / GameClock's Delay 
-	public final double paddleVelocity = 2.5;
+	private double ballVelocity = 5;	//unit: pixels / GameClock's Delay 
+	public final double paddleVelocity = 4;
 	public final int width, height;
 	//private List<Ball> balls = new ArrayList<Ball>();	may add multiple balls for difficulty
 	private Ball ball;
@@ -44,7 +44,7 @@ public class Table extends JPanel implements ActionListener {
 		this.width = width;
 		this.height = height;
 		this.addPaddle(new Paddle(this, paddleEdgeDistance));
-		this.addPaddle(new Paddle(this, width - paddleEdgeDistance));
+		this.addPaddle(new Paddle(this, width - paddleEdgeDistance - paddleWidth));
 		this.setOpaque(false);
 		this.setPreferredSize(new Dimension(width, height));
 	}

@@ -8,14 +8,11 @@ import javax.swing.SwingWorker;
 public class Paddle {
 	private double yLoc;
 	private final double xLoc;
-	private final Table table;
-	
 	public Paddle(Table table, double x) {
 		this(table, x, table.height / 2);
 	}
 	
 	public Paddle(Table table, double x, double y) {
-		this.table = table;
 		xLoc = x;
 		yLoc = y;
 	}
@@ -40,102 +37,121 @@ public class Paddle {
 
 
 class KeyHandler implements KeyListener {
-	private boolean wKeyReleased,
-					sKeyReleased,
-					upKeyReleased,
-					downKeyReleased;
+	private boolean wKeyPressed = false,
+					sKeyPressed = false,
+					upKeyPressed = false,
+					downKeyPressed = false;
 	private Table table;
 	private double deltaY;
 	
 	public KeyHandler(Table table) {
 		this.table = table;
 		deltaY = table.paddleVelocity;
+		startSwingWorkers();
 	}
 	
-	//key input handling not completed, paddles move twice as fast after holding key around 1 sec
-	@Override
-	public void keyPressed(KeyEvent e) {
-		//left side player
-		if (e.getKeyCode() == KeyEvent.VK_W) {
-			wKeyReleased = false;
-			(new SwingWorker<Void, Void>() {
-				@Override
-				protected Void doInBackground() {
-					do {
+	private void startSwingWorkers() {
+		(new SwingWorker<Void, Void>() {	//while W is held
+			@Override
+			protected Void doInBackground() {
+				while (true) {
+					while (wKeyPressed) {
 						table.getLeftPaddle().moveUp(deltaY);
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {e.printStackTrace();}
 					}
-					while (!wKeyReleased);	//while W is held
-					return null;
+					try {
+						Thread.sleep(16);
+					} catch (InterruptedException e) {e.printStackTrace();}
 				}
-			}).execute();
-		}
+			}
+		}).execute();
 		
-		else if (e.getKeyCode() == KeyEvent.VK_S) {
-			sKeyReleased = false;
-			(new SwingWorker<Void, Void>() {
-				@Override
-				protected Void doInBackground() {
-					do {
+		(new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() {
+				while (true) {
+					while (sKeyPressed) {	//while S is held
 						table.getLeftPaddle().moveDown(deltaY);
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {e.printStackTrace();}
 					}
-					while (!sKeyReleased);	//while S is held
-					return null;
+					try {
+						Thread.sleep(16);
+					} catch (InterruptedException e) {e.printStackTrace();}
 				}
-			}).execute();
-		}
+			}
+		}).execute();
 		
-		//right side player
-		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			upKeyReleased = false;
-			(new SwingWorker<Void, Void>() {
-				@Override
-				protected Void doInBackground() {
-					do {
+		(new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() {
+				while (true) {
+					while (upKeyPressed) {
 						table.getRightPaddle().moveUp(deltaY);
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {e.printStackTrace();}
 					}
-					while (!upKeyReleased);
-					return null;
+					try {
+						Thread.sleep(16);
+					} catch (InterruptedException e) {e.printStackTrace();}
 				}
-			}).execute();
-		}
+			}
+		}).execute();
 		
-		else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			downKeyReleased = false;
-			(new SwingWorker<Void, Void>() {
-				@Override
-				protected Void doInBackground() {
-					do {
+		(new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() {
+				while (true) {
+					while (downKeyPressed) {
 						table.getRightPaddle().moveDown(deltaY);
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {e.printStackTrace();}
 					}
-					while (!downKeyReleased);
-					return null;
+					try {
+						Thread.sleep(16);
+					} catch (InterruptedException e) {e.printStackTrace();}
 				}
-			}).execute();
-		}
+			}
+		}).execute();
+	}
+	
+	//key input handling not completed, paddles move twice as fast after holding key around 1 sec
+	//key input treated as typing characters. seems keyPressed() is invoked twice
+	@Override
+	public void keyPressed(KeyEvent e) {
+		//left side player
+		if (e.getKeyCode() == KeyEvent.VK_W)
+			wKeyPressed = true;
+		
+		else if (e.getKeyCode() == KeyEvent.VK_S)
+			sKeyPressed = true;
+		
+		//right side player
+		if (e.getKeyCode() == KeyEvent.VK_UP)
+			upKeyPressed = true;
+		
+		else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+			downKeyPressed = true;
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_W)
-			wKeyReleased = true;
+			wKeyPressed = false;
+		
 		else if (e.getKeyCode() == KeyEvent.VK_S)
-			sKeyReleased = true;
+			sKeyPressed = false;
+		
 		else if (e.getKeyCode() == KeyEvent.VK_UP)
-			upKeyReleased = true;
+			upKeyPressed = false;
+		
 		else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-			downKeyReleased = true;
+			downKeyPressed = false;
 	}
 
 	@Override
