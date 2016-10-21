@@ -32,7 +32,6 @@ public class Ball {
 		vector[1] = direction;
 	}
 	
-	//does not bounce properly, unknown reason
 	public void update() {
 		double deltaX, deltaY, angle, magnitude;
 		if (getLeftEdge() <= 0) {	//reaching the left edge of the table
