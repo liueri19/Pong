@@ -19,6 +19,7 @@ public class Table extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final Timer displayTimer = new Timer(17, this);	//approximately 60 fps
 	public final int gameClockInterval = 16;
+	private final GameClock gameClock = new GameClock(this);
 	private double ballVelocity = 5;	//unit: pixels / GameClock's Delay 
 	public final double paddleVelocity = 4;
 	public final int width, height;
@@ -27,10 +28,13 @@ public class Table extends JPanel implements ActionListener {
 	public final int ballRadius = 10;
 	private int playerLScore = 0;
 	private int playerRScore = 0;
+	public static final int MAX_SCORE = 10;
 	private List<Paddle> paddles = new ArrayList<Paddle>(2);
 	public final int paddleWidth = 20;
 	public final int paddleHeight = 80;
 	public final int paddleEdgeDistance = 30;
+	
+	private final Object monitor = new Object();
 	
 	public Table() {
 		this(800, 600);
@@ -66,7 +70,7 @@ public class Table extends JPanel implements ActionListener {
         frame.pack();
 		frame.setVisible(true);
 		displayTimer.start();
-		(new GameClock(this)).execute();
+		gameClock.execute();
 	}
 	
 	public void updateAll() {
@@ -77,6 +81,18 @@ public class Table extends JPanel implements ActionListener {
 	public void resetBall() {
 		//construct new ball
 		ball.reset();
+	}
+	
+	public void pauseGame() {
+		synchronized (monitor) {
+			gameClock.pause();
+		}
+	}
+	
+	public void resumeGame() {
+		synchronized (this) {
+			this.notifyAll();
+		}
 	}
 	
 	//invoked on every repaint()
@@ -95,17 +111,32 @@ public class Table extends JPanel implements ActionListener {
 		g.fillRect(width - paddleEdgeDistance - paddleWidth, (int) paddles.get(1).getY(), paddleWidth, paddleHeight);
 		//paint scores
 		int pointSize = 32;
+		boolean endGame = playerLScore == MAX_SCORE || playerRScore == MAX_SCORE;
 		g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, pointSize));
 		FontMetrics fm = g.getFontMetrics();
+		if (endGame)
+			g.setColor(Color.RED);
 		g.drawString(
 				String.format("%02d : %02d", getPlayerLScore(), getPlayerRScore()),	// format string to "XX : XX"
 				(int) (width / 2 - fm.charWidth('0') * 3.5), fm.getHeight());
+		if (endGame)
+			this.pauseGame();
 	}
 	
 	//will be invoked by the timer with 20 milliseconds intervals
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.repaint();
+	}
+	
+	public void playerLScore() {
+		playerLScore++;
+		resetBall();
+	}
+	
+	public void playerRScore() {
+		playerRScore++;
+		resetBall();
 	}
 	
 	//accessors & mutators
@@ -125,18 +156,8 @@ public class Table extends JPanel implements ActionListener {
 		return paddles.get(1);
 	}
 	
-	public void playerLScore() {
-		playerLScore++;
-		resetBall();
-	}
-	
 	public int getPlayerLScore() {
 		return playerLScore;
-	}
-	
-	public void playerRScore() {
-		playerRScore++;
-		resetBall();
 	}
 	
 	public int getPlayerRScore() {
