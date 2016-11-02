@@ -18,9 +18,9 @@ public class Paddle {
 	//AI: follow the ball's position
 	public void updatePaddle() {
 		double ballY = table.getBall().getY();
-		if (getY() > ballY)
+		if (getY() + table.paddleHeight / 2 > ballY)
 			moveUp(table.paddleVelocity);
-		else if (getY() < ballY)
+		else if (getY()  + table.paddleHeight / 2 < ballY)
 			moveDown(table.paddleVelocity);
 	}
 	

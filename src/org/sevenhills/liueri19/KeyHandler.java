@@ -94,10 +94,10 @@ public class KeyHandler implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		//left side player
-		if (e.getKeyCode() == KeyEvent.VK_W)
+		if (e.getKeyCode() == KeyEvent.VK_W && !table.AIEnabled)
 			wKeyPressed = true;
 		
-		else if (e.getKeyCode() == KeyEvent.VK_S)
+		else if (e.getKeyCode() == KeyEvent.VK_S && !table.AIEnabled)
 			sKeyPressed = true;
 		
 		//right side player
@@ -110,10 +110,10 @@ public class KeyHandler implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_W)
+		if (e.getKeyCode() == KeyEvent.VK_W && !table.AIEnabled)
 			wKeyPressed = false;
 		
-		else if (e.getKeyCode() == KeyEvent.VK_S)
+		else if (e.getKeyCode() == KeyEvent.VK_S && !table.AIEnabled)
 			sKeyPressed = false;
 		
 		else if (e.getKeyCode() == KeyEvent.VK_UP)
