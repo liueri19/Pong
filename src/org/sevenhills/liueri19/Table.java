@@ -34,6 +34,7 @@ public class Table extends JPanel implements ActionListener {
 	public final int paddleHeight = 80;
 	public final int paddleEdgeDistance = 30;
 	private boolean paused = false;
+	public boolean AIEnabled = false;
 	
 	public Table() {
 		this(800, 600);
@@ -74,7 +75,8 @@ public class Table extends JPanel implements ActionListener {
 	
 	public void updateAll() {
 		ball.update();
-		//movement for paddles are handled by separate threads
+		if (AIEnabled)
+			paddles.get(0).updatePaddle();
 	}
 	
 	public void resetBall() {
@@ -146,6 +148,10 @@ public class Table extends JPanel implements ActionListener {
 	}
 	
 	//accessors & mutators
+	public Ball getBall() {
+		return ball;
+	}
+	
 	public void addPaddle(Paddle paddle) {
 		paddles.add(paddle);
 	}

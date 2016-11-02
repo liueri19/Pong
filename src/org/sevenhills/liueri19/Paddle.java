@@ -15,6 +15,15 @@ public class Paddle {
 		yLoc = y;
 	}
 	
+	//AI: follow the ball's position
+	public void updatePaddle() {
+		double ballY = table.getBall().getY();
+		if (getY() > ballY)
+			moveUp(table.paddleVelocity);
+		else if (getY() < ballY)
+			moveDown(table.paddleVelocity);
+	}
+	
 	//accessors and mutators
 	public double getX() {
 		return xLoc;
@@ -29,12 +38,12 @@ public class Paddle {
 	}
 	
 	public void moveUp(double deltaY) {
-		if (!(getY() <= 0))
+		if (getY() > 0)
 			yLoc -= deltaY;
 	}
 	
 	public void moveDown(double deltaY) {
-		if (!(getY() + table.paddleHeight >= table.height))
+		if (getY() + table.paddleHeight < table.height)
 			yLoc += deltaY;
 	}
 }

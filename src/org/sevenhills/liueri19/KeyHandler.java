@@ -126,14 +126,17 @@ public class KeyHandler implements KeyListener {
 	@Override
 	public void keyTyped(KeyEvent e) {
 		char keyChar = e.getKeyChar();
-		if (keyChar == 'p' || keyChar == 'P') {
+		if (keyChar == 'p' || keyChar == 'P') {	//pause/resume game
 			if (table.isPaused())
 				table.resumeGame();
 			else
 				table.pauseGame();
 		}
-		else if (keyChar == 'r' || keyChar == 'R') {
+		else if (keyChar == 'r' || keyChar == 'R') {	//restart game
 			table.restart();
+		}
+		else if (keyChar == '1') {	//enable AI
+				table.AIEnabled = !table.AIEnabled;
 		}
 	}
 }
