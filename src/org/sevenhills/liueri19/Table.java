@@ -33,8 +33,7 @@ public class Table extends JPanel implements ActionListener {
 	public final int paddleWidth = 20;
 	public final int paddleHeight = 80;
 	public final int paddleEdgeDistance = 30;
-	
-	private final Object monitor = new Object();
+	private boolean paused = false;
 	
 	public Table() {
 		this(800, 600);
@@ -83,16 +82,23 @@ public class Table extends JPanel implements ActionListener {
 		ball.reset();
 	}
 	
-	public void pauseGame() {
-		synchronized (monitor) {
+	public synchronized void pauseGame() {
 			gameClock.pause();
-		}
+			paused = true;
 	}
 	
-	public void resumeGame() {
-		synchronized (this) {
+	public synchronized void resumeGame() {
 			this.notifyAll();
-		}
+			paused = false;
+	}
+	
+	public synchronized void restart() {
+		playerLScore = 0;
+		playerRScore = 0;
+		getLeftPaddle().setY(height / 2);
+		getRightPaddle().setY(height / 2);
+		resetBall();
+		resumeGame();
 	}
 	
 	//invoked on every repaint()
@@ -111,16 +117,16 @@ public class Table extends JPanel implements ActionListener {
 		g.fillRect(width - paddleEdgeDistance - paddleWidth, (int) paddles.get(1).getY(), paddleWidth, paddleHeight);
 		//paint scores
 		int pointSize = 32;
-		boolean endGame = playerLScore == MAX_SCORE || playerRScore == MAX_SCORE;
+		boolean endGame = (playerLScore == MAX_SCORE || playerRScore == MAX_SCORE);
 		g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, pointSize));
 		FontMetrics fm = g.getFontMetrics();
 		if (endGame)
-			g.setColor(Color.RED);
+			g.setColor(Color.YELLOW);
 		g.drawString(
 				String.format("%02d : %02d", getPlayerLScore(), getPlayerRScore()),	// format string to "XX : XX"
 				(int) (width / 2 - fm.charWidth('0') * 3.5), fm.getHeight());
 		if (endGame)
-			this.pauseGame();
+			pauseGame();
 	}
 	
 	//will be invoked by the timer with 20 milliseconds intervals
@@ -162,5 +168,9 @@ public class Table extends JPanel implements ActionListener {
 	
 	public int getPlayerRScore() {
 		return playerRScore;
+	}
+
+	public boolean isPaused() {
+		return paused;
 	}
 }

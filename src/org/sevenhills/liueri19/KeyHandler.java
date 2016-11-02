@@ -9,8 +9,7 @@ public class KeyHandler implements KeyListener {
 	private boolean wKeyPressed = false,
 					sKeyPressed = false,
 					upKeyPressed = false,
-					downKeyPressed = false,
-					paused = false;	//TODO: unfixed: 'paused' flag is inconsistent with the actual state after the game end.
+					downKeyPressed = false;
 	private Table table;
 	private double deltaY;
 	
@@ -25,7 +24,7 @@ public class KeyHandler implements KeyListener {
 			@Override
 			protected Void doInBackground() {
 				while (true) {
-					while (wKeyPressed && !paused) {
+					while (wKeyPressed && !table.isPaused()) {
 						table.getLeftPaddle().moveUp(deltaY);
 						try {
 							Thread.sleep(16);
@@ -42,7 +41,7 @@ public class KeyHandler implements KeyListener {
 			@Override
 			protected Void doInBackground() {
 				while (true) {
-					while (sKeyPressed && !paused) {	//while S is held
+					while (sKeyPressed && !table.isPaused()) {	//while S is held
 						table.getLeftPaddle().moveDown(deltaY);
 						try {
 							Thread.sleep(16);
@@ -59,7 +58,7 @@ public class KeyHandler implements KeyListener {
 			@Override
 			protected Void doInBackground() {
 				while (true) {
-					while (upKeyPressed && !paused) {
+					while (upKeyPressed && !table.isPaused()) {
 						table.getRightPaddle().moveUp(deltaY);
 						try {
 							Thread.sleep(16);
@@ -76,7 +75,7 @@ public class KeyHandler implements KeyListener {
 			@Override
 			protected Void doInBackground() {
 				while (true) {
-					while (downKeyPressed && !paused) {
+					while (downKeyPressed && !table.isPaused()) {
 						table.getRightPaddle().moveDown(deltaY);
 						try {
 							Thread.sleep(16);
@@ -128,13 +127,13 @@ public class KeyHandler implements KeyListener {
 	public void keyTyped(KeyEvent e) {
 		char keyChar = e.getKeyChar();
 		if (keyChar == 'p' || keyChar == 'P') {
-			synchronized (this) {
-				if (paused)
-					table.resumeGame();
-				else
-					table.pauseGame();
-				paused = !paused;
-			}
+			if (table.isPaused())
+				table.resumeGame();
+			else
+				table.pauseGame();
+		}
+		else if (keyChar == 'r' || keyChar == 'R') {
+			table.restart();
 		}
 	}
 }

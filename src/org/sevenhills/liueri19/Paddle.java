@@ -24,6 +24,10 @@ public class Paddle {
 		return yLoc;
 	}
 	
+	public void setY(double y) {
+		yLoc = y;
+	}
+	
 	public void moveUp(double deltaY) {
 		if (!(getY() <= 0))
 			yLoc -= deltaY;
