@@ -23,13 +23,16 @@ public class KeyHandler implements KeyListener {
 		(new SwingWorker<Void, Void>() {	//while W is held
 			@Override
 			protected Void doInBackground() {
+				Paddle paddle = table.getLeftPaddle();
 				while (true) {
 					while (wKeyPressed && !table.isPaused()) {
-						table.getLeftPaddle().moveUp(deltaY);
+						paddle.moveUp(deltaY);
+						paddle.setMovingUp(true);
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {e.printStackTrace();}
 					}
+					paddle.setMovingUp(false);
 					try {
 						Thread.sleep(16);
 					} catch (InterruptedException e) {e.printStackTrace();}
@@ -40,13 +43,16 @@ public class KeyHandler implements KeyListener {
 		(new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() {
+				Paddle paddle = table.getLeftPaddle();
 				while (true) {
 					while (sKeyPressed && !table.isPaused()) {	//while S is held
-						table.getLeftPaddle().moveDown(deltaY);
+						paddle.moveDown(deltaY);
+						paddle.setMovingDown(true);
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {e.printStackTrace();}
 					}
+					paddle.setMovingDown(false);
 					try {
 						Thread.sleep(16);
 					} catch (InterruptedException e) {e.printStackTrace();}
@@ -57,13 +63,16 @@ public class KeyHandler implements KeyListener {
 		(new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() {
+				Paddle paddle = table.getRightPaddle();
 				while (true) {
 					while (upKeyPressed && !table.isPaused()) {
-						table.getRightPaddle().moveUp(deltaY);
+						paddle.moveUp(deltaY);
+						paddle.setMovingUp(true);
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {e.printStackTrace();}
 					}
+					paddle.setMovingUp(false);
 					try {
 						Thread.sleep(16);
 					} catch (InterruptedException e) {e.printStackTrace();}
@@ -74,13 +83,16 @@ public class KeyHandler implements KeyListener {
 		(new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() {
+				Paddle paddle = table.getRightPaddle();
 				while (true) {
 					while (downKeyPressed && !table.isPaused()) {
-						table.getRightPaddle().moveDown(deltaY);
+						paddle.moveDown(deltaY);
+						paddle.setMovingDown(true);
 						try {
 							Thread.sleep(16);
 						} catch (InterruptedException e) {e.printStackTrace();}
 					}
+					paddle.setMovingDown(false);
 					try {
 						Thread.sleep(16);
 					} catch (InterruptedException e) {e.printStackTrace();}
@@ -89,15 +101,13 @@ public class KeyHandler implements KeyListener {
 		}).execute();
 	}
 	
-	//key input handling not completed, paddles move twice as fast after holding key around 1 sec
-	//key input treated as typing characters. seems keyPressed() is invoked twice
 	@Override
 	public void keyPressed(KeyEvent e) {
 		//left side player
-		if (e.getKeyCode() == KeyEvent.VK_W && !table.AIEnabled)
+		if (e.getKeyCode() == KeyEvent.VK_W && !table.isAIEnabled())
 			wKeyPressed = true;
 		
-		else if (e.getKeyCode() == KeyEvent.VK_S && !table.AIEnabled)
+		else if (e.getKeyCode() == KeyEvent.VK_S && !table.isAIEnabled())
 			sKeyPressed = true;
 		
 		//right side player
@@ -110,10 +120,10 @@ public class KeyHandler implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_W && !table.AIEnabled)
+		if (e.getKeyCode() == KeyEvent.VK_W && !table.isAIEnabled())
 			wKeyPressed = false;
 		
-		else if (e.getKeyCode() == KeyEvent.VK_S && !table.AIEnabled)
+		else if (e.getKeyCode() == KeyEvent.VK_S && !table.isAIEnabled())
 			sKeyPressed = false;
 		
 		else if (e.getKeyCode() == KeyEvent.VK_UP)
@@ -135,8 +145,8 @@ public class KeyHandler implements KeyListener {
 		else if (keyChar == 'r' || keyChar == 'R') {	//restart game
 			table.restart();
 		}
-		else if (keyChar == '1') {	//enable AI
-				table.AIEnabled = !table.AIEnabled;
+		else if (keyChar == '1') {	//enable/disable AI
+				table.setAIEnabled(!table.isAIEnabled());
 		}
 	}
 }

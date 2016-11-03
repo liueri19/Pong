@@ -4,6 +4,7 @@ public class Paddle {
 	private double yLoc;
 	private final double xLoc;
 	private final Table table;
+	private boolean isMovingUp, isMovingDown;
 	
 	public Paddle(Table table, double x) {
 		this(table, x, table.height / 2);
@@ -45,5 +46,21 @@ public class Paddle {
 	public void moveDown(double deltaY) {
 		if (getY() + table.paddleHeight < table.height)
 			yLoc += deltaY;
+	}
+
+	public boolean isMovingUp() {
+		return isMovingUp;
+	}
+
+	public void setMovingUp(boolean isMovingUp) {
+		this.isMovingUp = isMovingUp;
+	}
+
+	public boolean isMovingDown() {
+		return isMovingDown;
+	}
+
+	public void setMovingDown(boolean isMovingDown) {
+		this.isMovingDown = isMovingDown;
 	}
 }

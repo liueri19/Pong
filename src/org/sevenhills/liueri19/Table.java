@@ -8,33 +8,38 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Table extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	//graphics timer
 	private final Timer displayTimer = new Timer(17, this);	//approximately 60 fps
+	//game clock
 	public final int gameClockInterval = 16;
 	private final GameClock gameClock = new GameClock(this);
-	private double ballVelocity = 5;	//unit: pixels / GameClock's Delay 
-	public final double paddleVelocity = 4;
-	public final int width, height;
+	//ball
 	//private List<Ball> balls = new ArrayList<Ball>();	may add multiple balls for difficulty
 	private Ball ball;
+	private double ballVelocity = 5;	//unit: pixels / GameClock's Delay 
 	public final int ballRadius = 10;
+	//player
 	private int playerLScore = 0;
 	private int playerRScore = 0;
 	public static final int MAX_SCORE = 10;
-	private List<Paddle> paddles = new ArrayList<Paddle>(2);
+	//paddles
+	//private List<Paddle> paddles = new ArrayList<Paddle>(2);
+	private Paddle leftPaddle, rightPaddle;
 	public final int paddleWidth = 20;
 	public final int paddleHeight = 80;
 	public final int paddleEdgeDistance = 30;
+	public final double paddleVelocity = 4;
+	public final double paddleDisplacement = paddleVelocity / 4;	//the displacement a moving paddle would cause on the ball bouncing off it
+	
+	public final int width, height;
 	private boolean paused = false;
-	public boolean AIEnabled = false;
+	private boolean AIEnabled = false;
 	
 	public Table() {
 		this(800, 600);
@@ -47,8 +52,8 @@ public class Table extends JPanel implements ActionListener {
 		super(true);
 		this.width = width;
 		this.height = height;
-		this.addPaddle(new Paddle(this, paddleEdgeDistance));
-		this.addPaddle(new Paddle(this, width - paddleEdgeDistance - paddleWidth));
+		leftPaddle = new Paddle(this, paddleEdgeDistance);
+		rightPaddle = new Paddle(this, width - paddleEdgeDistance - paddleWidth);
 		this.setOpaque(false);
 		this.setPreferredSize(new Dimension(width, height));
 	}
@@ -76,7 +81,7 @@ public class Table extends JPanel implements ActionListener {
 	public void updateAll() {
 		ball.update();
 		if (AIEnabled)
-			paddles.get(0).updatePaddle();
+			leftPaddle.updatePaddle();
 	}
 	
 	public void resetBall() {
@@ -114,9 +119,9 @@ public class Table extends JPanel implements ActionListener {
 		int d = 2 * ballRadius;
 		g.fillOval((int) ball.getX() - ballRadius, (int) ball.getY() - ballRadius, d, d);
 		//paint left paddle
-		g.fillRect(paddleEdgeDistance, (int) paddles.get(0).getY(), paddleWidth, paddleHeight);
+		g.fillRect(paddleEdgeDistance, (int) leftPaddle.getY(), paddleWidth, paddleHeight);
 		//paint right paddle
-		g.fillRect(width - paddleEdgeDistance - paddleWidth, (int) paddles.get(1).getY(), paddleWidth, paddleHeight);
+		g.fillRect(width - paddleEdgeDistance - paddleWidth, (int) rightPaddle.getY(), paddleWidth, paddleHeight);
 		//paint scores
 		int pointSize = 32;
 		boolean endGame = (playerLScore == MAX_SCORE || playerRScore == MAX_SCORE);
@@ -152,20 +157,12 @@ public class Table extends JPanel implements ActionListener {
 		return ball;
 	}
 	
-	public void addPaddle(Paddle paddle) {
-		paddles.add(paddle);
-	}
-	
-	public List<Paddle> getPaddles() {
-		return paddles;
-	}
-	
 	public Paddle getLeftPaddle() {
-		return paddles.get(0);
+		return leftPaddle;
 	}
 	
 	public Paddle getRightPaddle() {
-		return paddles.get(1);
+		return rightPaddle;
 	}
 	
 	public int getPlayerLScore() {
@@ -178,5 +175,13 @@ public class Table extends JPanel implements ActionListener {
 
 	public boolean isPaused() {
 		return paused;
+	}
+	
+	public void setAIEnabled(boolean AIState) {
+		AIEnabled = AIState;
+	}
+	
+	public boolean isAIEnabled() {
+		return AIEnabled;
 	}
 }

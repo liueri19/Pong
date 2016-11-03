@@ -1,11 +1,11 @@
 package org.sevenhills.liueri19;
 
-import java.util.List;
 import java.util.Random;
 
 public class Ball {
 	private double[] coordinate = new double[2];	//use array to store coordinate: {X, Y} units are pixels
 	private double[] vector = new double[2];	//use array to store vector: {magnitude, direction}
+	private final double initMagnitude;
 	/*
 	 * direction, in degrees, the ball is going. 0 degrees is horizontal right.
 	 * magnitude of the vector should not change once ball constructed.
@@ -30,6 +30,7 @@ public class Ball {
 		this.coordinate = coordinate;
 		vector[0] = magnitude;
 		vector[1] = direction;
+		initMagnitude = magnitude;
 	}
 	
 	public void update() {
@@ -47,9 +48,8 @@ public class Ball {
 		}
 
 		//collision detection for paddles
-		List<Paddle> paddles = table.getPaddles();
-		Paddle leftPaddle = paddles.get(0);
-		Paddle rightPaddle = paddles.get(1);
+		Paddle leftPaddle = table.getLeftPaddle();
+		Paddle rightPaddle = table.getRightPaddle();
 		if (((getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth))
 				&& (getLowerEdge() >= leftPaddle.getY())
 				&& (getUpperEdge() <= leftPaddle.getY() + table.paddleHeight)
@@ -83,8 +83,30 @@ public class Ball {
 		setDirection(-getDirection());
 	}
 	
+	//known bugs exist
 	private void bounceHorizontal() {
+		Paddle paddle;
+		//figure out which paddle is the ball bouncing off
+		if (getX() < table.width / 2)
+			paddle = table.getLeftPaddle();
+		paddle = table.getRightPaddle();
+		//bounce the ball
 		setDirection(180 - getDirection());
+		//if the paddle is moving
+		if (paddle.isMovingUp() && !paddle.isMovingDown()) {
+			double magnitude = getMagnitude();
+			double direction = getDirection();
+			//newVelocity = sqrt( (cos(angle)*v)^2 + (sin(a)*v)^2 )
+			setMagnitude(Math.sqrt(Math.pow(Math.tan(direction)*magnitude, 2) + Math.pow(Math.sin(direction)*magnitude + table.paddleDisplacement, 2)));
+			//newAngle = arctan( sin(angle) / cos(angle) )
+			setDirection(Math.atan(Math.sin(direction) / Math.cos(direction)));
+		}
+		else if (paddle.isMovingDown() && !paddle.isMovingUp()) {
+			double magnitude = getMagnitude();
+			double direction = getDirection();
+			setMagnitude(Math.sqrt(Math.pow(Math.tan(direction)*magnitude, 2) + Math.pow(Math.sin(direction)*magnitude - table.paddleDisplacement, 2)));
+			setDirection(Math.atan(Math.sin(direction) / Math.cos(direction)));
+		}
 	}
 	
 	//to make sure direction is in the range 0 inclusive to 360 exclusive.
@@ -106,6 +128,7 @@ public class Ball {
 	public void reset() {
 		setX(table.width / 2.0);
 		setY(table.height / 2.0);
+		setMagnitude(initMagnitude);
 		setDirection(randomDirection());
 	}
 	
