@@ -66,10 +66,10 @@ public class Ball {
 		}
 		
 		//update coordinate
-		angle = getDirection();
+		angle = getDirectionRadians();
 		magnitude = getMagnitude();
-		deltaX = Math.cos(Math.toRadians(angle)) * magnitude;
-		deltaY = Math.sin(Math.toRadians(angle)) * magnitude;
+		deltaX = Math.cos(angle) * magnitude;
+		deltaY = Math.sin(angle) * magnitude;
 		coordinate[0] += deltaX;
 		coordinate[1] -= deltaY;
 		
@@ -80,10 +80,10 @@ public class Ball {
 	}
 	
 	private void bounceVertical() {
-		setDirection(-getDirection());
+		setDirection(-getDirectionDegrees());
 	}
 	
-	//known bugs exist
+	//TODO: bug possibly caused by incorrect direction
 	private void bounceHorizontal() {
 		Paddle paddle;
 		//figure out which paddle is the ball bouncing off
@@ -91,21 +91,25 @@ public class Ball {
 			paddle = table.getLeftPaddle();
 		paddle = table.getRightPaddle();
 		//bounce the ball
-		setDirection(180 - getDirection());
+		setDirection(180 - getDirectionDegrees());
 		//if the paddle is moving
 		if (paddle.isMovingUp() && !paddle.isMovingDown()) {
-			double magnitude = getMagnitude();
-			double direction = getDirection();
-			//newVelocity = sqrt( (cos(angle)*v)^2 + (sin(a)*v)^2 )
-			setMagnitude(Math.sqrt(Math.pow(Math.tan(direction)*magnitude, 2) + Math.pow(Math.sin(direction)*magnitude + table.paddleDisplacement, 2)));
-			//newAngle = arctan( sin(angle) / cos(angle) )
-			setDirection(Math.atan(Math.sin(direction) / Math.cos(direction)));
+			double magnitude = getMagnitude();	//total velocity
+			double direction = getDirectionRadians();	//direction in radians
+			double xVelocity = Math.cos(direction)*magnitude;	//x velocity
+			double yVelocity = Math.sin(direction)*magnitude;	//y velocity
+			//newVelocity = sqrt( x^2 + (y+d)^2 )
+			setMagnitude(Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(-yVelocity - table.paddleDisplacement, 2)));
+			//newAngle = arccos( x / newVelocity )
+			setDirection(Math.toDegrees(Math.acos(xVelocity / getMagnitude())));	//possibly this cause the bug
 		}
 		else if (paddle.isMovingDown() && !paddle.isMovingUp()) {
 			double magnitude = getMagnitude();
-			double direction = getDirection();
-			setMagnitude(Math.sqrt(Math.pow(Math.tan(direction)*magnitude, 2) + Math.pow(Math.sin(direction)*magnitude - table.paddleDisplacement, 2)));
-			setDirection(Math.atan(Math.sin(direction) / Math.cos(direction)));
+			double direction = getDirectionRadians();
+			double xVelocity = Math.cos(direction)*magnitude;
+			double yVelocity = Math.sin(direction)*magnitude;
+			setMagnitude(Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(-yVelocity + table.paddleDisplacement, 2)));
+			setDirection(Math.toDegrees(Math.acos(xVelocity / getMagnitude())));
 		}
 	}
 	
@@ -181,13 +185,17 @@ public class Ball {
 		this.coordinate = new double[] {x, y};
 	}
 	
-	public double getDirection() {
+	public double getDirectionDegrees() {
 		return vector[1];
 	}
 	
+	public double getDirectionRadians() {
+		return Math.toRadians(vector[1]);
+	}
+	
 	/**Negative value for parameter d is allowed.*/
-	public void setDirection(double d) {
-		vector[1] = parseDirection(d);
+	public void setDirection(double degrees) {
+		vector[1] = parseDirection(degrees);
 	}
 	
 	public double getMagnitude() {
