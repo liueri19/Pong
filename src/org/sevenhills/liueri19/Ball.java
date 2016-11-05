@@ -89,28 +89,39 @@ public class Ball {
 		//figure out which paddle is the ball bouncing off
 		if (getX() < table.width / 2)
 			paddle = table.getLeftPaddle();
-		paddle = table.getRightPaddle();
+		else
+			paddle = table.getRightPaddle();
 		//bounce the ball
 		setDirection(180 - getDirectionDegrees());
 		//if the paddle is moving
+		//lines marked debugging should be removed later
+		double newAngle;//debugging
+		double oldAngle = getDirectionDegrees();//debugging
+		String moving = "Neither";//debugging
 		if (paddle.isMovingUp() && !paddle.isMovingDown()) {
 			double magnitude = getMagnitude();	//total velocity
 			double direction = getDirectionRadians();	//direction in radians
 			double xVelocity = Math.cos(direction)*magnitude;	//x velocity
-			double yVelocity = Math.sin(direction)*magnitude;	//y velocity
+			double yVelocity = -Math.sin(direction)*magnitude;	//y velocity
 			//newVelocity = sqrt( x^2 + (y+d)^2 )
-			setMagnitude(Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(-yVelocity - table.paddleDisplacement, 2)));
+			setMagnitude(Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity - table.paddleDisplacement, 2)));
 			//newAngle = arccos( x / newVelocity )
+			newAngle = Math.toDegrees(Math.acos(xVelocity / getMagnitude()));//debugging
 			setDirection(Math.toDegrees(Math.acos(xVelocity / getMagnitude())));	//possibly this cause the bug
+			moving = "Up";//debugging
 		}
 		else if (paddle.isMovingDown() && !paddle.isMovingUp()) {
 			double magnitude = getMagnitude();
 			double direction = getDirectionRadians();
 			double xVelocity = Math.cos(direction)*magnitude;
-			double yVelocity = Math.sin(direction)*magnitude;
-			setMagnitude(Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(-yVelocity + table.paddleDisplacement, 2)));
+			double yVelocity = -Math.sin(direction)*magnitude;
+			setMagnitude(Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity + table.paddleDisplacement, 2)));
+			newAngle = Math.toDegrees(Math.acos(xVelocity / getMagnitude()));//debugging
 			setDirection(Math.toDegrees(Math.acos(xVelocity / getMagnitude())));
+			moving = "Down";//debugging
 		}
+		else newAngle = getDirectionDegrees();//debugging
+		System.out.printf("Paddle: %s%nMoving: %s%nOld Angle = %f%nNew Angle = %f%n%n", paddle.toString(), moving, oldAngle, newAngle);//debugging
 	}
 	
 	//to make sure direction is in the range 0 inclusive to 360 exclusive.

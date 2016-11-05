@@ -25,6 +25,13 @@ public class Paddle {
 			moveDown(table.paddleVelocity);
 	}
 	
+	@Override
+	public String toString() {
+		if (xLoc < table.width / 2)
+			return "LeftPaddle";
+		return "RightPaddle";
+	}
+	
 	//accessors and mutators
 	public double getX() {
 		return xLoc;
