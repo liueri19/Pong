@@ -94,7 +94,7 @@ public class Ball {
 		//bounce the ball
 		setDirection(180 - getDirectionDegrees());
 		//if the paddle is moving
-		//lines marked debugging should be removed later
+		//debugging code should be kept.
 		double newAngle;//debugging
 		double oldAngle = getDirectionDegrees();//debugging
 		String moving = "Neither";//debugging
