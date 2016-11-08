@@ -95,15 +95,16 @@ public class Ball {
 		setDirection(180 - getDirectionDegrees());
 		//if the paddle is moving
 		//debugging code should be kept.
-		double newAngle;//debugging
+		double newAngle, newMagnitude;//debugging
 		double oldAngle = getDirectionDegrees();//debugging
 		String moving = "Neither";//debugging
 		if (paddle.isMovingUp() && !paddle.isMovingDown()) {
 			double magnitude = getMagnitude();	//total velocity
 			double direction = getDirectionRadians();	//direction in radians
-			double xVelocity = Math.cos(direction)*magnitude;	//x velocity
-			double yVelocity = -Math.sin(direction)*magnitude;	//y velocity
+			double xVelocity = Math.cos(direction)*magnitude;	//x velocity	4.89365960143123
+			double yVelocity = -Math.sin(direction)*magnitude;	//y velocity	3.02571669499987
 			//newVelocity = sqrt( x^2 + (y+d)^2 )
+			newMagnitude = Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity - table.paddleDisplacement, 2));//debugging
 			setMagnitude(Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity - table.paddleDisplacement, 2)));
 			//newAngle = arccos( x / newVelocity )
 			newAngle = Math.toDegrees(Math.acos(xVelocity / getMagnitude()));//debugging
@@ -115,13 +116,14 @@ public class Ball {
 			double direction = getDirectionRadians();
 			double xVelocity = Math.cos(direction)*magnitude;
 			double yVelocity = -Math.sin(direction)*magnitude;
+			newMagnitude = Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity + table.paddleDisplacement, 2));//debugging	6.33674200225011
 			setMagnitude(Math.sqrt(Math.pow(xVelocity, 2) + Math.pow(yVelocity + table.paddleDisplacement, 2)));
 			newAngle = Math.toDegrees(Math.acos(xVelocity / getMagnitude()));//debugging
 			setDirection(Math.toDegrees(Math.acos(xVelocity / getMagnitude())));
 			moving = "Down";//debugging
 		}
-		else newAngle = getDirectionDegrees();//debugging
-		System.out.printf("Paddle: %s%nMoving: %s%nOld Angle = %f%nNew Angle = %f%n%n", paddle.toString(), moving, oldAngle, newAngle);//debugging
+		else {newAngle = getDirectionDegrees(); newMagnitude = getMagnitude();}//debugging
+		System.out.printf("Paddle: %s%nMoving: %s%nOld Angle = %f%nNew Angle = %f%nNew Magnitude = %f%n", paddle.toString(), moving, oldAngle, newAngle, newMagnitude);//debugging
 	}
 	
 	//to make sure direction is in the range 0 inclusive to 360 exclusive.
