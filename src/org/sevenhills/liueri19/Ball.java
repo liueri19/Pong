@@ -48,6 +48,7 @@ public class Ball {
 		}
 
 		//collision detection for paddles
+		//BUG: unwanted behavior when bouncing on upper and lower edges of moving paddles
 		Paddle leftPaddle = table.getLeftPaddle();
 		Paddle rightPaddle = table.getRightPaddle();
 		if (((getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth))
@@ -58,13 +59,15 @@ public class Ball {
 				&& (getLowerEdge() >= rightPaddle.getY())
 				&& (getUpperEdge() <= rightPaddle.getY() + table.paddleHeight)
 				&& (getRightEdge() < rightPaddle.getX() + table.paddleWidth))) {
-			if (getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth - table.ballRadius)
-					|| getRightEdge() >= (rightPaddle.getX() + table.ballRadius))
+			//if (getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth - table.ballRadius)
+			double xMagnitude = Math.cos(getDirectionRadians()) * getMagnitude();
+			if (getLeftEdge() <= (leftPaddle.getX() + table.paddleWidth + xMagnitude) //Math.cos(angle) give a negative value in this case
+					|| getRightEdge() >= (rightPaddle.getX() + xMagnitude))
 				bounceVertical();
 			else
 				bounceHorizontal();
 		}
-		
+
 		//update coordinate
 		angle = getDirectionRadians();
 		magnitude = getMagnitude();

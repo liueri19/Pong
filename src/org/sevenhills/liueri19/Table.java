@@ -22,7 +22,7 @@ public class Table extends JPanel implements ActionListener {
 	//ball
 	//private List<Ball> balls = new ArrayList<Ball>();	may add multiple balls for difficulty
 	private Ball ball;
-	private double ballVelocity = 5;	//unit: pixels / GameClock's Delay 
+	public final double ballVelocity = 5;	//unit: pixels / GameClock's Delay 
 	public final int ballRadius = 10;
 	//player
 	private int playerLScore = 0;
