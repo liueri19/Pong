@@ -39,7 +39,7 @@ public class Table extends JPanel implements ActionListener {
 	
 	public final int width, height;
 	private boolean paused = false;
-	private boolean AIEnabled = false;
+	private boolean AIState = true;
 	
 	public Table() {
 		this(800, 600);
@@ -52,8 +52,8 @@ public class Table extends JPanel implements ActionListener {
 		super(true);
 		this.width = width;
 		this.height = height;
-		leftPaddle = new Paddle(this, paddleEdgeDistance);
-		rightPaddle = new Paddle(this, width - paddleEdgeDistance - paddleWidth);
+		leftPaddle = new Paddle(this, paddleEdgeDistance, AIState);
+		rightPaddle = new Paddle(this, width - paddleEdgeDistance - paddleWidth, false);
 		this.setOpaque(false);
 		this.setPreferredSize(new Dimension(width, height));
 	}
@@ -80,8 +80,8 @@ public class Table extends JPanel implements ActionListener {
 	
 	public void updateAll() {
 		ball.update();
-		if (AIEnabled)
-			leftPaddle.updatePaddle();
+		leftPaddle.update();
+		rightPaddle.update();
 	}
 	
 	public void resetBall() {
@@ -178,10 +178,10 @@ public class Table extends JPanel implements ActionListener {
 	}
 	
 	public void setAIEnabled(boolean AIState) {
-		AIEnabled = AIState;
+		this.AIState = AIState;
 	}
 	
 	public boolean isAIEnabled() {
-		return AIEnabled;
+		return AIState;
 	}
 }

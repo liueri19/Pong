@@ -4,25 +4,37 @@ public class Paddle {
 	private double yLoc;
 	private final double xLoc;
 	private final Table table;
+	private final double paddleVelocity;
 	private boolean isMovingUp, isMovingDown;
+	private boolean isAIEnabled;
 	
-	public Paddle(Table table, double x) {
-		this(table, x, table.height / 2);
+	public Paddle(Table table, double x, boolean AIState) {
+		this(table, x, table.height / 2, AIState);
 	}
 	
-	public Paddle(Table table, double x, double y) {
+	public Paddle(Table table, double x, double y, boolean AIState) {
 		this.table = table;
+		paddleVelocity = table.paddleVelocity;
 		xLoc = x;
 		yLoc = y;
+		this.isAIEnabled = AIState;
 	}
 	
 	//AI: follow the ball's position
-	public void updatePaddle() {
-		double ballY = table.getBall().getY();
-		if (getY() + table.paddleHeight / 2 > ballY)
-			moveUp(table.paddleVelocity);
-		else if (getY()  + table.paddleHeight / 2 < ballY)
-			moveDown(table.paddleVelocity);
+	public void update() {
+		if (isAIEnabled) {
+			double ballY = table.getBall().getY();
+			if (getY() + table.paddleHeight / 2 > ballY)
+				moveUp();
+			else if (getY()  + table.paddleHeight / 2 < ballY)
+				moveDown();
+		}
+		else {
+			if (isMovingUp && !isMovingDown)
+				moveUp();
+			else if (isMovingDown && !isMovingUp)
+				moveDown();
+		}
 	}
 	
 	@Override
@@ -45,14 +57,14 @@ public class Paddle {
 		yLoc = y;
 	}
 	
-	public void moveUp(double deltaY) {
+	public void moveUp() {
 		if (getY() > 0)
-			yLoc -= deltaY;
+			yLoc -= paddleVelocity;
 	}
 	
-	public void moveDown(double deltaY) {
+	public void moveDown() {
 		if (getY() + table.paddleHeight < table.height)
-			yLoc += deltaY;
+			yLoc += paddleVelocity;
 	}
 
 	public boolean isMovingUp() {
@@ -69,5 +81,13 @@ public class Paddle {
 
 	public void setMovingDown(boolean isMovingDown) {
 		this.isMovingDown = isMovingDown;
+	}
+	
+	public boolean isAIEnabled() {
+		return isAIEnabled;
+	}
+	
+	public void setAIEnabled(boolean AIState) {
+		isAIEnabled = AIState;
 	}
 }
