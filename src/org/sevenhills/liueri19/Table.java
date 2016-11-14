@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class Table extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -17,7 +18,7 @@ public class Table extends JPanel implements ActionListener {
 	private final Timer displayTimer = new Timer(17, this);	//approximately 60 fps
 */	//game clock
 	public final int gameClockInterval = 17;
-	private final GameClock gameClock = new GameClock(this);
+	private final Timer gameClock = new Timer(gameClockInterval, this);
 	//ball
 	//private List<Ball> balls = new ArrayList<Ball>();	may add multiple balls for difficulty
 	private Ball ball;
