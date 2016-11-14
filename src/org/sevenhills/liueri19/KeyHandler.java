@@ -5,18 +5,20 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 	private Table table;
+	private Paddle leftPaddle;
 	
 	public KeyHandler(Table table) {
 		this.table = table;
+		leftPaddle = table.getLeftPaddle();
 	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		//left side player
-		if (e.getKeyCode() == KeyEvent.VK_W && !table.isAIEnabled())
+		if (e.getKeyCode() == KeyEvent.VK_W && !leftPaddle.isAIEnabled())
 			table.getLeftPaddle().setMovingUp(true);
 		
-		else if (e.getKeyCode() == KeyEvent.VK_S && !table.isAIEnabled())
+		else if (e.getKeyCode() == KeyEvent.VK_S && !leftPaddle.isAIEnabled())
 			table.getLeftPaddle().setMovingDown(true);
 		
 		//right side player
@@ -29,10 +31,10 @@ public class KeyHandler implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_W && !table.isAIEnabled())
+		if (e.getKeyCode() == KeyEvent.VK_W && !leftPaddle.isAIEnabled())
 			table.getLeftPaddle().setMovingUp(false);
 		
-		else if (e.getKeyCode() == KeyEvent.VK_S && !table.isAIEnabled())
+		else if (e.getKeyCode() == KeyEvent.VK_S && !leftPaddle.isAIEnabled())
 			table.getLeftPaddle().setMovingDown(false);
 		
 		else if (e.getKeyCode() == KeyEvent.VK_UP)
@@ -55,7 +57,7 @@ public class KeyHandler implements KeyListener {
 			table.restart();
 		}
 		else if (keyChar == '1') {	//enable/disable AI
-				table.getLeftPaddle().setAIEnabled(!table.getLeftPaddle().isAIEnabled());
+			leftPaddle.setAIEnabled(!leftPaddle.isAIEnabled());
 		}
 	}
 }
