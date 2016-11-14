@@ -10,14 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
 public class Table extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	//graphics timer
+/*	//graphics timer
 	private final Timer displayTimer = new Timer(17, this);	//approximately 60 fps
-	//game clock
-	public final int gameClockInterval = 16;
+*/	//game clock
+	public final int gameClockInterval = 17;
 	private final GameClock gameClock = new GameClock(this);
 	//ball
 	//private List<Ball> balls = new ArrayList<Ball>();	may add multiple balls for difficulty
@@ -74,8 +73,7 @@ public class Table extends JPanel implements ActionListener {
         frame.add(this);
         frame.pack();
 		frame.setVisible(true);
-		displayTimer.start();
-		gameClock.execute();
+		gameClock.start();
 	}
 	
 	public void updateAll() {
@@ -90,12 +88,13 @@ public class Table extends JPanel implements ActionListener {
 	}
 	
 	public synchronized void pauseGame() {
-			gameClock.pause();
+			gameClock.stop();
 			paused = true;
 	}
 	
 	public synchronized void resumeGame() {
-			this.notifyAll();
+			//this.notifyAll();
+			gameClock.start();
 			paused = false;
 	}
 	
@@ -139,6 +138,7 @@ public class Table extends JPanel implements ActionListener {
 	//will be invoked by the timer with 20 milliseconds intervals
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		updateAll();
 		this.repaint();
 	}
 	
