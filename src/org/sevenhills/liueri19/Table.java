@@ -88,18 +88,18 @@ public class Table extends JPanel implements ActionListener {
 		ball.reset();
 	}
 	
-	public synchronized void pauseGame() {
+	public void pauseGame() {
 			gameClock.stop();
 			paused = true;
 	}
 	
-	public synchronized void resumeGame() {
+	public void resumeGame() {
 			//this.notifyAll();
 			gameClock.start();
 			paused = false;
 	}
 	
-	public synchronized void restart() {
+	public void restart() {
 		playerLScore = 0;
 		playerRScore = 0;
 		getLeftPaddle().setY(height / 2);
